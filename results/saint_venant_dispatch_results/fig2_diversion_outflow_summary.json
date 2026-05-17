@@ -1,0 +1,79 @@
+{
+  "figure": "/Users/pupu/Desktop/灌区调控阈值/github_share/shijin-canal-saint-venant/results/saint_venant_dispatch_results/figures/fig2_diversion_outflow_process.png",
+  "timeseries_csv": "/Users/pupu/Desktop/灌区调控阈值/github_share/shijin-canal-saint-venant/results/saint_venant_dispatch_results/fig2_diversion_outflow_timeseries.csv",
+  "dispatch_table_csv": "/Users/pupu/Desktop/灌区调控阈值/github_share/shijin-canal-saint-venant/results/saint_venant_dispatch_results/dispatch_feasibility_outlets.csv",
+  "model": "1-D Saint-Venant finite-volume HLL forward model with semi-implicit Manning friction",
+  "head_boundary": {
+    "initial_flow_m3s": 0.0,
+    "target_flow_m3s": 80.0,
+    "ramp_hours": 0.5,
+    "boundary_depth": "Manning normal depth compatible with boundary discharge"
+  },
+  "diversion_rule": "Qdiv=min(specified Qmax, branch safe capacity, remaining demand/dt, local available water) times depth activation factor",
+  "safe_depth_ratio_for_branch_capacity": 0.9,
+  "diversions": {
+    "71": {
+      "specified_qmax_m3s": 20.0,
+      "demand_m3": 250000.0,
+      "branch_node": 4372,
+      "branch_safe_capacity_m3s": 70.65559959084915,
+      "first_positive_time_h": 0.7030555555555555,
+      "close_time_h": 5.243055555555555,
+      "final_supplied_m3": 250000.0
+    },
+    "89": {
+      "specified_qmax_m3s": 20.0,
+      "demand_m3": 300000.0,
+      "branch_node": 4384,
+      "branch_safe_capacity_m3s": 88.31949948856145,
+      "first_positive_time_h": 0.8638888888888889,
+      "close_time_h": 6.831111111111111,
+      "final_supplied_m3": 300000.0
+    },
+    "150": {
+      "specified_qmax_m3s": 5.0,
+      "demand_m3": 60000.0,
+      "branch_node": 4643,
+      "branch_safe_capacity_m3s": 10.91458379823184,
+      "first_positive_time_h": 1.4952777777777777,
+      "close_time_h": 6.217222222222222,
+      "final_supplied_m3": 60000.0
+    },
+    "194": {
+      "specified_qmax_m3s": 5.0,
+      "demand_m3": 80000.0,
+      "branch_node": 4673,
+      "branch_safe_capacity_m3s": 10.91458379823184,
+      "first_positive_time_h": 1.9938888888888888,
+      "close_time_h": 7.644166666666667,
+      "final_supplied_m3": 80000.0
+    },
+    "287": {
+      "specified_qmax_m3s": 12.0,
+      "demand_m3": 160000.0,
+      "branch_node": 4396,
+      "branch_safe_capacity_m3s": 88.31949948856145,
+      "first_positive_time_h": 3.4586111111111113,
+      "close_time_h": 9.454166666666667,
+      "final_supplied_m3": 160000.0
+    },
+    "349": {
+      "specified_qmax_m3s": 5.0,
+      "demand_m3": 50000.0,
+      "branch_node": 4707,
+      "branch_safe_capacity_m3s": 10.91458379823184,
+      "first_positive_time_h": 4.443611111111111,
+      "close_time_h": 9.196944444444444,
+      "final_supplied_m3": 50000.0
+    },
+    "383": {
+      "specified_qmax_m3s": 5.0,
+      "demand_m3": 40000.0,
+      "branch_node": 4730,
+      "branch_safe_capacity_m3s": 10.91458379823184,
+      "first_positive_time_h": 5.122222222222222,
+      "close_time_h": 9.381666666666666,
+      "final_supplied_m3": 40000.0
+    }
+  }
+}
