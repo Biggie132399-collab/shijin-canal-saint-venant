@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Generate Figure 3 from the revised Saint-Venant forward result.
+Cumulative-supply postprocessing for the Saint-Venant dispatch result.
 
 Figure 3 shows cumulative supplied water volume at each diversion outlet:
 
     W_k(t) = ∫ Q_div,k(t) dt
 
-The discharge time series comes from stage7_saint_venant_fig2_revised.py, i.e. a
-Saint-Venant finite-volume forward run with explicit HLL flux and
+The discharge time series comes from dispatch.py, i.e. a Saint-Venant
+finite-volume forward run with explicit HLL flux and
 semi-implicit Manning friction.
 """
 
@@ -21,7 +21,8 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 import muskingum_cunge_stage1 as stage1
-import stage7_saint_venant_fig2_revised as sv
+import dispatch as sv
+import dispatch_postprocess as dispatch_plot
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,12 +31,12 @@ FIG_DIR = OUT_DIR / "figures"
 
 
 def load_or_run_result():
-    cfg = sv.Config()
+    cfg = sv.load_config()
     result = sv.simulate(cfg)
     return cfg, result
 
 
-def draw_fig3(result):
+def draw_fig3(result, out_path: Path | None = None):
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     w, h = 1800, 1120
     img = Image.new("RGB", (w, h), "white")
@@ -78,7 +79,7 @@ def draw_fig3(result):
     for node in sv.DIVERSION_NODES:
         vals = [v / 1e4 for v in result["supplied"][node]]
         pts = [(xp(t), yp(v)) for t, v in zip(times, vals)]
-        d.line(pts, fill=sv.COLORS[node], width=4)
+        d.line(pts, fill=dispatch_plot.COLORS[node], width=4)
 
         close_h = result["close_h"][node]
         demand = sv.SPECS[node].demand_m3 / 1e4
@@ -86,16 +87,16 @@ def draw_fig3(result):
             x_close = xp(close_h)
             y_close = yp(demand)
             # Inflection point marker: exact completion/closure moment.
-            d.ellipse((x_close - 7, y_close - 7, x_close + 7, y_close + 7), fill=sv.COLORS[node], outline="white", width=2)
-            d.line((x_close, y_close, right, y_close), fill=sv.COLORS[node], width=1)
+            d.ellipse((x_close - 7, y_close - 7, x_close + 7, y_close + 7), fill=dispatch_plot.COLORS[node], outline="white", width=2)
+            d.line((x_close, y_close, right, y_close), fill=dispatch_plot.COLORS[node], width=1)
             ox, oy = label_offsets.get(node, (14, 0))
-            d.text((right + ox, y_close + oy), f"{node}口  {demand:.1f}×10⁴ m³", font=small, fill=sv.COLORS[node])
+            d.text((right + ox, y_close + oy), f"{node}口  {demand:.1f}×10⁴ m³", font=small, fill=dispatch_plot.COLORS[node])
 
     draw_local_inset(d, result, (left + 64, top + 44, left + 610, top + 382))
 
     legend_x, legend_y = left, h - 146
     for node in sv.DIVERSION_NODES:
-        d.line((legend_x, legend_y, legend_x + 42, legend_y), fill=sv.COLORS[node], width=5)
+        d.line((legend_x, legend_y, legend_x + 42, legend_y), fill=dispatch_plot.COLORS[node], width=5)
         d.text((legend_x + 52, legend_y - 13), f"{node}口", font=small, fill="#263241")
         legend_x += 160
         if legend_x > right - 160:
@@ -108,7 +109,8 @@ def draw_fig3(result):
     note2 = "由于积分平滑效应会掩盖局部涌波/水锤扰动，后续引入残差 Delta W(t) = W_actual(t) - W_ref(t) 进行剥离与量化分析。"
     d.text((80, h - 63), note1, font=small, fill="#586579")
     d.text((80, h - 35), note2, font=small, fill="#586579")
-    out = FIG_DIR / "fig3_cumulative_supply_saint_venant.png"
+    out = out_path or FIG_DIR / "fig3_cumulative_supply_saint_venant.png"
+    out.parent.mkdir(parents=True, exist_ok=True)
     img.save(out, quality=95)
     return out
 
@@ -189,32 +191,32 @@ def draw_local_inset(d, result, rect):
     actual_pts = [(ix(t), iy(v)) for t, v in residual]
     ref_pts = [(ix(t), iy(0.0)) for t, _ in residual]
     draw_polyline_dashed(d, ref_pts, "#64748B", width=4)
-    d.line(actual_pts, fill=sv.COLORS[89], width=5)
+    d.line(actual_pts, fill=dispatch_plot.COLORS[89], width=5)
 
     x_close = ix(close_71)
     y = plot_top
     while y < plot_bottom:
-        d.line((x_close, y, x_close, min(y + 8, plot_bottom)), fill=sv.COLORS[71], width=2)
+        d.line((x_close, y, x_close, min(y + 8, plot_bottom)), fill=dispatch_plot.COLORS[71], width=2)
         y += 16
 
     # Mark the maximum separation in the inset window.
     max_row = max(residual, key=lambda row: row[1])
     x_m = ix(max_row[0])
     y_m = iy(max_row[1])
-    d.ellipse((x_m - 6, y_m - 6, x_m + 6, y_m + 6), fill=sv.COLORS[89], outline="white", width=2)
+    d.ellipse((x_m - 6, y_m - 6, x_m + 6, y_m + 6), fill=dispatch_plot.COLORS[89], outline="white", width=2)
     d.line((x_m, y_m, x_m + 52, y_m - 36), fill="#475467", width=1)
     d.text((x_m + 56, y_m - 50), f"偏离 {max_row[1]:.0f} m³", font=tick_font, fill="#475467")
 
     d.text((ix0 + 16, iy0 + 14), "局部放大：89口残差响应", font=title_font, fill="#162033")
     d.text((ix0 + 16, iy0 + 42), "Delta W89 = 实际累计 - 关闸前趋势，单位 m³", font=tick_font, fill="#667085")
-    d.line((ix0 + 18, iy1 - 30, ix0 + 54, iy1 - 30), fill=sv.COLORS[89], width=5)
+    d.line((ix0 + 18, iy1 - 30, ix0 + 54, iy1 - 30), fill=dispatch_plot.COLORS[89], width=5)
     d.text((ix0 + 62, iy1 - 42), "实际残差", font=note_font, fill="#263241")
     draw_dashed_line(d, (ix0 + 230, iy1 - 30), (ix0 + 266, iy1 - 30), "#64748B", width=4)
     d.text((ix0 + 274, iy1 - 42), "趋势基准", font=note_font, fill="#263241")
 
 
 def save_csv_and_summary(result, fig_path: Path):
-    csv_path = OUT_DIR / "stage6_fig3_cumulative_supply.csv"
+    csv_path = OUT_DIR / "cumulative_supply_timeseries.csv"
     with csv_path.open("w", encoding="utf-8-sig", newline="") as f:
         fields = ["time_h"] + [f"W_{n}_m3" for n in sv.DIVERSION_NODES]
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -229,7 +231,7 @@ def save_csv_and_summary(result, fig_path: Path):
         "csv": str(csv_path),
         "formula": "W_k(t)=integral_0^t Q_div,k(tau) d tau",
         "unit": "m3; plotted as 1e4 m3",
-        "source": "stage6 Saint-Venant semi-implicit forward simulation",
+        "source": "dispatch.py finite-volume dispatch simulation",
         "completion": {
             str(n): {
                 "demand_m3": sv.SPECS[n].demand_m3,
@@ -239,7 +241,7 @@ def save_csv_and_summary(result, fig_path: Path):
             for n in sv.DIVERSION_NODES
         },
     }
-    (OUT_DIR / "stage6_fig3_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    (OUT_DIR / "cumulative_supply_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 
 

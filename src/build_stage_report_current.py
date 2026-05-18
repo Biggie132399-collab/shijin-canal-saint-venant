@@ -373,10 +373,11 @@ def build_doc():
         doc,
         "本次报告将原先 Muskingum-Cunge 快速验证思路调整为一维 Saint-Venant 动态正演框架。当前计算程序为本人在 Python 中编写的原型程序，未直接调用开源水动力求解器；主要代码文件列于下方。"
     )
-    add_bullet(doc, "/Users/pupu/Documents/New project/stage7_saint_venant_fig2_revised.py：Saint-Venant 正演与配水口出流过程。")
-    add_bullet(doc, "/Users/pupu/Documents/New project/stage6_saint_venant_fig3.py：累计供水量积分与图3绘制。")
-    add_bullet(doc, "/Users/pupu/Documents/New project/stage6_saint_venant_fig4_key_depth.py：关键节点水深动态过程。")
-    add_bullet(doc, "/Users/pupu/Documents/New project/saint_venant_dispatch_fig6.py：沿程最大水深包络线。")
+    add_bullet(doc, "src/dispatch.py：Saint-Venant 动态配水调度核心。")
+    add_bullet(doc, "src/dispatch_postprocess.py：配水口出流过程与结果表后处理。")
+    add_bullet(doc, "src/cumulative_supply_postprocess.py：累计供水量积分与图3绘制。")
+    add_bullet(doc, "src/key_node_depth_postprocess.py：关键节点水深动态过程。")
+    add_bullet(doc, "src/depth_envelope_postprocess.py：沿程最大水深包络线与安全校核。")
     add_body(
         doc,
         "为回应“公式之间需要相互衔接”的问题，本节按守恒变量、控制方程、数值通量、地形梯度项、摩阻项、分水源项和边界条件的顺序给出完整计算链条。"
@@ -411,7 +412,7 @@ def build_doc():
     )
 
     add_heading(doc, "2.3 有限体积离散与 HLL 数值通量", 2)
-    add_body(doc, "对第 i 个控制体，采用有限体积格式进行时间推进。当前程序中通量项显式计算，摩阻项随后半隐式修正。")
+    add_body(doc, "对第 i 个控制体，采用有限体积格式进行时间推进。当前程序中通量项采用 NumPy 向量化显式计算，摩阻项随后半隐式修正。")
     add_formula(doc, 9, "U_i^(n+1,*) = U_i^n − (Δt/Δx_i)(F_(i+1/2)^n − F_(i−1/2)^n) + Δt S_(b,i)^n + Δt S_(div,i)^n")
     add_formula(doc, 10, "F_HLL = [s_R F(U_L) − s_L F(U_R) + s_Ls_R(U_R − U_L)]/(s_R − s_L)")
     add_formula(doc, 11, "s_L = min(u_L − c_L, u_R − c_R)")
@@ -463,20 +464,20 @@ def build_doc():
     add_heading(doc, "2.6 分水口在 Saint-Venant 框架下的描述", 2)
     add_body(
         doc,
-        "分水口不是单独脱离 Saint-Venant 方程的经验后处理，而是作为集中侧向出流源项进入连续方程和动量方程。对位于节点 i 的第 k 个分水口，其实际出流从主渠控制体中扣除，并同步扣除相应动量。"
+        "分水口不是单独脱离 Saint-Venant 方程的经验后处理。当前版本将每个配水口连接到对应支渠链，主渠和支渠均按一维 Saint-Venant 方程推进；汊点处根据主渠水位与支渠首段水位形成的能量坡降计算入支流量，再在主渠控制体与支渠首控制体之间守恒转移水量并修正动量。"
     )
-    add_formula(doc, 23, "S_(div,i) = [−Q_(div,k)/Δx_i, −βQ_(div,k)u_i/Δx_i]^T")
-    add_formula(doc, 24, "Q_(div,k)(t) = min[φ(h_i)min(Q_(max,k),Q_(safe,k)), Q_(stor,k)(t), W_(rem,k)(t)/Δt]")
-    add_formula(doc, 25, "Q_(safe,k) = (1/n_b)A_b(0.9D_b)R_b(0.9D_b)^(2/3)S_(b,k)^(1/2)")
+    add_formula(doc, 23, "S_(div,main) = [−Q_(div,k)/Δx_i, −βQ_(div,k)u_i/Δx_i]^T,   S_(div,branch) = [+Q_(div,k)/Δx_b, +Q_(div,k)u_b/Δx_b]^T")
+    add_formula(doc, 24, "Q_(div,k)(t) = min[φ(h_i)min(Q_(max,k),Q_(safe,k),Q_(energy,k)), Q_(stor,k), Q_(free,b,k), W_(rem,k)/Δt]")
+    add_formula(doc, 25, "Q_(energy,k) = (1/n_b)A_b(h_J)R_b(h_J)^(2/3)[max(H_i−H_b,0)/L_J]^(1/2)")
     add_formula(doc, 26, "φ(h_i)=0, h_i≤0.2D_i;  φ(h_i)=√[(h_i−0.2D_i)/(0.6D_i−0.2D_i)], 0.2D_i<h_i<0.6D_i;  φ(h_i)=1, h_i≥0.6D_i")
     add_formula(doc, 27, "W_k(t_m) = Σ_(j=1..m) Q_(div,k)(t_j)Δt")
     add_variable_lines(
         doc,
         [
             "Q_div,k：第 k 个配水口实际出流，单位 m³/s；Q_max,k：第 k 个配水口设定最大过流能力，单位 m³/s。",
-            "Q_safe,k：支渠安全过流能力估计值，单位 m³/s；D_b、A_b、R_b、n_b 分别为支渠首段渠深、面积、水力半径和糙率。",
+            "Q_safe,k：支渠安全过流能力估计值，单位 m³/s；Q_energy,k：由主渠-支渠水位差和入口距离形成的能量坡降控制的入支能力。",
             "Q_stor,k：该主渠控制体在最小湿润水深以上可释放的水量折算流量，单位 m³/s。",
-            "W_rem,k：剩余需水量，单位 m³；W_k：累计供水量，单位 m³。",
+            "Q_free,b,k：支渠首控制体在安全水深以下的可接纳水量折算流量，单位 m³/s；W_rem,k：剩余需水量，单位 m³；W_k：累计供水量，单位 m³。",
             "φ(h_i)：水深启闭系数，无量纲；D_i：节点 i 所属渠段渠深，单位 m；β：侧向出流动量修正系数。当前代码取 β=1，即按本地平均流速扣除主流动量；若后续取得闸门角度和支渠流向资料，可改为校准参数。",
         ],
     )

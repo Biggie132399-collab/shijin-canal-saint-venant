@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Figure 6: maximum water-depth envelope along the 0-456 main canal.
+Maximum water-depth envelope postprocessing for the 0-456 main canal.
 
 This script reruns the same Saint-Venant dispatch condition and records the
 maximum hydraulic depth at every main-canal node during the simulation. The
@@ -17,7 +17,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 import muskingum_cunge_stage1 as stage1
-import stage7_saint_venant_fig2_revised as sv
+import dispatch as sv
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,95 +25,15 @@ OUT_DIR = ROOT / "results" / "saint_venant_dispatch_results"
 FIG_DIR = OUT_DIR / "figures"
 
 
-def simulate_envelope(cfg: sv.Config):
-    nodes, params, neighbors, ids, x, dx_cell, sections, bed, diversion_indices = sv.build_grid()
-    # Reuse the full simulation implementation by adding a compact local copy of
-    # the state loop that tracks hmax at every cell.
-    n = len(ids)
-    a = [sv.area_from_depth(cfg.initial_depth_m, sec) for sec in sections]
-    q = [0.0 for _ in range(n)]
-    min_area = [sv.area_from_depth(cfg.min_depth_m, sec) for sec in sections]
-    supplied = {node: 0.0 for node in sv.DIVERSION_NODES}
-    close_time = {node: None for node in sv.DIVERSION_NODES}
-    qdiv_current = {node: 0.0 for node in sv.DIVERSION_NODES}
-    limits = sv.branch_limits(nodes, params, neighbors, cfg)
-
-    hmax = [cfg.initial_depth_m for _ in range(n)]
-    hmax_time = [0.0 for _ in range(n)]
-    total_steps = int(round(cfg.duration_hours * 3600.0 / cfg.dt_seconds))
-
-    for step in range(total_steps + 1):
-        t_s = step * cfg.dt_seconds
-        for i in range(n):
-            h_now = sv.depth_from_area(max(a[i], min_area[i]), sections[i])
-            if h_now > hmax[i]:
-                hmax[i] = h_now
-                hmax_time[i] = t_s / 3600.0
-        if step == total_steps:
-            break
-
-        q_in = sv.head_inflow(t_s, cfg)
-        h_left = sv.normal_depth(q_in, sections[0], sv.local_slope(0, x, bed, cfg), cfg)
-        a_left = sv.area_from_depth(max(h_left, cfg.min_depth_m), sections[0])
-        q_left = q_in
-
-        q_down = max(q[-1], 0.0)
-        h_right = sv.normal_depth(q_down, sections[-1], sv.local_slope(n - 1, x, bed, cfg), cfg)
-        a_right = sv.area_from_depth(max(h_right, cfg.min_depth_m), sections[-1])
-        q_right = q[-1]
-
-        fluxes = [sv.hll_flux(a_left, q_left, sections[0], a[0], q[0], sections[0])]
-        for i in range(n - 1):
-            fluxes.append(sv.hll_flux(a[i], q[i], sections[i], a[i + 1], q[i + 1], sections[i + 1]))
-        fluxes.append(sv.hll_flux(a[-1], q[-1], sections[-1], a_right, q_right, sections[-1]))
-
-        new_a = a[:]
-        new_q = q[:]
-        qdiv_current = {node: 0.0 for node in sv.DIVERSION_NODES}
-
-        for i in range(n):
-            dx = max(dx_cell[i], 1.0)
-            da = -(fluxes[i + 1][0] - fluxes[i][0]) / dx
-            dq = -(fluxes[i + 1][1] - fluxes[i][1]) / dx
-            dq += sv.G * max(a[i], min_area[i]) * sv.local_slope(i, x, bed, cfg)
-            new_a[i] = a[i] + cfg.dt_seconds * da
-            new_q[i] = q[i] + cfg.dt_seconds * dq
-
-        for node, idx in diversion_indices.items():
-            if close_time[node] is not None:
-                continue
-            spec = sv.SPECS[node]
-            sec = sections[idx]
-            h_local = sv.depth_from_area(max(new_a[idx], min_area[idx]), sec)
-            factor = sv.diversion_factor(h_local, sec.depth)
-            remaining = max(spec.demand_m3 - supplied[node], 0.0)
-            storage_above_min = max(new_a[idx] - min_area[idx], 0.0) * dx_cell[idx] / cfg.dt_seconds
-            q_capacity = min(spec.max_flow_m3s, limits[node].safe_capacity_m3s) * factor
-            qdiv = min(q_capacity, remaining / cfg.dt_seconds, storage_above_min)
-            supplied[node] += qdiv * cfg.dt_seconds
-            if supplied[node] >= spec.demand_m3 - 1.0e-6 and close_time[node] is None:
-                close_time[node] = (t_s + cfg.dt_seconds) / 3600.0
-            qdiv_current[node] = qdiv
-            new_a[idx] -= qdiv * cfg.dt_seconds / max(dx_cell[idx], 1.0)
-            velocity = new_q[idx] / max(new_a[idx], min_area[idx])
-            new_q[idx] -= qdiv * velocity * cfg.dt_seconds / max(dx_cell[idx], 1.0)
-
-        for i in range(n):
-            if new_a[i] < min_area[i]:
-                new_a[i] = min_area[i]
-            cf = sv.friction_coefficient(max(new_a[i], min_area[i]), q[i], sections[i])
-            denom = 1.0 + cfg.dt_seconds * sv.G * max(new_a[i], min_area[i]) * cf
-            new_q[i] = new_q[i] / max(denom, 1.0e-9)
-            if abs(new_q[i]) < 1.0e-7:
-                new_q[i] = 0.0
-            c = sv.wave_speed(new_a[i], sections[i])
-            q_limit = 8.0 * new_a[i] * max(c, 0.1)
-            new_q[i] = max(min(new_q[i], q_limit), -q_limit)
-        a, q = new_a, new_q
-
-    dist_km = [v / 1000.0 for v in x]
-    depth_limit = [sec.depth for sec in sections]
-    safe_depth = [cfg.safe_depth_ratio * sec.depth for sec in sections]
+def compute_depth_envelope(cfg: sv.Config):
+    simulation = sv.simulate(cfg)
+    _, _, _, main_grid, _, _ = sv.build_network(cfg)
+    ids = simulation["main_ids"]
+    dist_km = simulation["main_dist_km"]
+    hmax = simulation["main_hmax"]
+    hmax_time = simulation["main_hmax_time"]
+    depth_limit = main_grid.depth.tolist()
+    safe_depth = (cfg.safe_depth_ratio * main_grid.depth).tolist()
     return {
         "ids": ids,
         "dist_km": dist_km,
@@ -121,7 +41,7 @@ def simulate_envelope(cfg: sv.Config):
         "hmax_time": hmax_time,
         "safe_depth": safe_depth,
         "depth_limit": depth_limit,
-        "close_h": close_time,
+        "close_h": simulation["close_h"],
     }
 
 
@@ -268,7 +188,7 @@ def save_outputs(result, fig_path, exceed_safe, exceed_design):
 
 
 def main():
-    result = simulate_envelope(sv.Config())
+    result = compute_depth_envelope(sv.load_config())
     fig_path, exceed_safe, exceed_design = draw_fig6(result)
     save_outputs(result, fig_path, exceed_safe, exceed_design)
 

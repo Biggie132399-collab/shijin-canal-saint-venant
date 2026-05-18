@@ -1,0 +1,40 @@
+[
+  {
+    "node": 71,
+    "branch_start_node": 4372,
+    "branch_nodes_used": 12,
+    "depth_D_m": 5.0,
+    "bottom_width_b_m": 25.0,
+    "side_slope_z": 0.0,
+    "manning_n": 0.025,
+    "safe_depth_0.9D_m": 4.5,
+    "first_segment_length_m": 43.67043006887199,
+    "first_segment_slope": 3.294632312864173e-07,
+    "capacity_first_segment_m3s": 5.735417813053508,
+    "first_10_nodes_length_m": 435.00743435845504,
+    "first_10_nodes_slope": 1.9716387405919352e-07,
+    "capacity_first_10_nodes_m3s": 4.436855201108118,
+    "full_branch_length_m": 512.7459282793562,
+    "full_branch_slope": 1.6727144238956295e-07,
+    "capacity_full_branch_m3s": 4.086697432578174
+  },
+  {
+    "node": 89,
+    "branch_start_node": 4384,
+    "branch_nodes_used": 12,
+    "depth_D_m": 5.0,
+    "bottom_width_b_m": 25.0,
+    "side_slope_z": 0.0,
+    "manning_n": 0.02,
+    "safe_depth_0.9D_m": 4.5,
+    "first_segment_length_m": 43.67043006217767,
+    "first_segment_slope": 3.1796876469491753e-07,
+    "capacity_first_segment_m3s": 7.043099549175011,
+    "first_10_nodes_length_m": 436.70430064131494,
+    "first_10_nodes_slope": 3.179687649084795e-07,
+    "capacity_first_10_nodes_m3s": 7.043099551540241,
+    "full_branch_length_m": 512.9610762743919,
+    "full_branch_slope": 3.179687649879164e-07,
+    "capacity_full_branch_m3s": 7.043099552420015
+  }
+]

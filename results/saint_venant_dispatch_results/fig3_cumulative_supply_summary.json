@@ -1,0 +1,44 @@
+{
+  "figure": "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/saint_venant_dispatch_results/figures/fig3_cumulative_supply_process.png",
+  "csv": "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/saint_venant_dispatch_results/fig3_cumulative_supply_timeseries.csv",
+  "formula": "W_k(t)=integral_0^t Q_div,k(tau) d tau",
+  "unit": "m3; plotted as 1e4 m3",
+  "source": "dispatch.py finite-volume dispatch simulation",
+  "completion": {
+    "71": {
+      "demand_m3": 250000.0,
+      "close_time_h": 5.243611111111111,
+      "final_supplied_m3": 250000.0
+    },
+    "89": {
+      "demand_m3": 300000.0,
+      "close_time_h": 6.831111111111111,
+      "final_supplied_m3": 300000.0
+    },
+    "150": {
+      "demand_m3": 60000.0,
+      "close_time_h": 6.429722222222222,
+      "final_supplied_m3": 60000.0
+    },
+    "194": {
+      "demand_m3": 80000.0,
+      "close_time_h": 7.676944444444445,
+      "final_supplied_m3": 80000.0
+    },
+    "287": {
+      "demand_m3": 160000.0,
+      "close_time_h": 9.446388888888889,
+      "final_supplied_m3": 160000.0
+    },
+    "349": {
+      "demand_m3": 50000.0,
+      "close_time_h": 9.303333333333333,
+      "final_supplied_m3": 50000.0
+    },
+    "383": {
+      "demand_m3": 40000.0,
+      "close_time_h": 9.469722222222222,
+      "final_supplied_m3": 40000.0
+    }
+  }
+}

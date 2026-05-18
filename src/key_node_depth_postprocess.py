@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Figure 4: dynamic water-depth response at key main-canal nodes.
+Key-node dynamic water-depth postprocessing for the Saint-Venant dispatch result.
 
 The depth series is recorded from the same Saint-Venant forward simulation used
 for Figures 2 and 3. It shows how the head inflow wave, lateral diversions and
@@ -17,7 +17,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 import muskingum_cunge_stage1 as stage1
-import stage7_saint_venant_fig2_revised as sv
+import dispatch as sv
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,7 +45,7 @@ COLORS = {
 }
 
 
-def draw_fig4(result):
+def draw_fig4(result, out_path: Path | None = None):
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     w, h = 1800, 1080
     img = Image.new("RGB", (w, h), "white")
@@ -120,13 +120,14 @@ def draw_fig4(result):
         fill="#586579",
     )
 
-    out = FIG_DIR / "fig4_key_node_depth_saint_venant.png"
+    out = out_path or FIG_DIR / "fig4_key_node_depth_saint_venant.png"
+    out.parent.mkdir(parents=True, exist_ok=True)
     img.save(out, quality=95)
     return out
 
 
 def save_csv_and_summary(result, fig_path: Path):
-    csv_path = OUT_DIR / "stage6_fig4_key_node_depth.csv"
+    csv_path = OUT_DIR / "key_node_depth_timeseries.csv"
     with csv_path.open("w", encoding="utf-8-sig", newline="") as f:
         fields = ["time_h"] + [f"depth_{node}_m" for node in KEY_NODES] + [f"water_level_{node}_m" for node in KEY_NODES]
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -147,12 +148,12 @@ def save_csv_and_summary(result, fig_path: Path):
         "key_nodes": KEY_NODES,
         "note": "water level Z can be obtained as bed elevation plus depth; both series are saved in the CSV.",
     }
-    (OUT_DIR / "stage6_fig4_key_node_depth_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    (OUT_DIR / "key_node_depth_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 
 
 def main():
-    result = sv.simulate(sv.Config())
+    result = sv.simulate(sv.load_config())
     fig_path = draw_fig4(result)
     save_csv_and_summary(result, fig_path)
 

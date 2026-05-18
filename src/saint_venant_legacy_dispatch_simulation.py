@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Saint-Venant forward simulation for Figure 2 on the 0-456 main canal.
+Legacy Saint-Venant dispatch simulation for the 0-456 main canal.
 
 This script is the first Saint-Venant-based replacement for the earlier
 dynamic-routing preview. It solves the 1-D shallow-water/Saint-Venant equations
@@ -39,7 +39,7 @@ import muskingum_cunge_stage1 as stage1
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data" / "raw"
-OUT_DIR = ROOT / "results" / "stage6_saint_venant_results"
+OUT_DIR = ROOT / "results" / "saint_venant_legacy_dispatch_results"
 FIG_DIR = OUT_DIR / "figures"
 
 G = 9.81
@@ -414,7 +414,7 @@ def draw_fig2(result):
 
 
 def write_outputs(result, fig_path: Path, cfg: Config):
-    with (OUT_DIR / "stage6_fig2_saint_venant_timeseries.csv").open("w", encoding="utf-8-sig", newline="") as f:
+    with (OUT_DIR / "legacy_dispatch_timeseries.csv").open("w", encoding="utf-8-sig", newline="") as f:
         depth_nodes = sorted(result.get("depth", {}).keys())
         fields = (
             ["time_h", "head_inflow_m3s"]
@@ -456,7 +456,7 @@ def write_outputs(result, fig_path: Path, cfg: Config):
             for n in DIVERSION_NODES
         },
     }
-    (OUT_DIR / "stage6_fig2_saint_venant_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    (OUT_DIR / "legacy_dispatch_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 
 

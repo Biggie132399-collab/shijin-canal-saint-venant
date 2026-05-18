@@ -1,0 +1,357 @@
+\subsection{Study canal and input data}
+
+The study reach is the 0--456 main canal of the Shijin irrigation canal
+prototype. The hydraulic model uses three raw input files. The file
+\texttt{input.txt} provides node identifiers, planar coordinates, bed elevation
+and channel style. The file \texttt{lineParam.txt} provides the cross-sectional
+parameters associated with each channel style, including design depth, bottom
+width, side-wall angle and Manning roughness. The file \texttt{neighborId.txt}
+defines the topological connectivity between nodes. The numerical scenario
+parameters, including time step, start and stop times, ramp duration, target
+head flow and safety depth ratio, are read from
+\texttt{data/configuration.json}.
+
+The main canal is represented by the ordered nodes from 0 to 456. The total
+main-canal length is 19941.40 m, with 457 computational nodes and 456
+inter-node reaches. The finite-volume cell length is computed from the actual
+node spacing. For interior cells,
+\begin{equation}
+    \Delta x_i = \frac{x_{i+1} - x_{i-1}}{2},
+\end{equation}
+whereas the two boundary cells use one-sided lengths. In the current data set,
+the finite-volume cell length ranges from 34.25 m to 52.94 m, with a mean value
+of 43.73 m. Seven diversion junctions are considered on the main canal:
+71, 89, 150, 194, 287, 349 and 383. Their connected branch chains contain
+12, 12, 30, 34, 11, 23 and 25 nodes, respectively.
+
+\subsection{Cross-sectional hydraulic relations}
+
+Each node is assigned a trapezoidal cross section from its channel style. For
+water depth \(h\), bottom width \(b\), and side slope \(z\) expressed as
+horizontal:vertical, the area, top width, wetted perimeter and hydraulic radius
+are
+\begin{equation}
+    A(h) = bh + zh^2,
+\end{equation}
+\begin{equation}
+    B(h) = b + 2zh,
+\end{equation}
+\begin{equation}
+    P(h) = b + 2h\sqrt{1+z^2},
+\end{equation}
+\begin{equation}
+    R(h) = \frac{A(h)}{P(h)}.
+\end{equation}
+The pressure integral used in the Saint-Venant momentum flux is
+\begin{equation}
+    I_1(h) = \frac{1}{2}bh^2 + \frac{1}{3}zh^3.
+\end{equation}
+Area and depth are converted analytically. Given area \(A\), the corresponding
+depth is
+\begin{equation}
+    h(A) =
+    \frac{-b + \sqrt{b^2 + 4zA}}{2z},
+\end{equation}
+with the rectangular limit \(h=A/b\) used when \(z\) is close to zero.
+
+\subsection{Saint-Venant governing equations}
+
+The forward hydraulic solver uses the one-dimensional Saint-Venant equations in
+conservative form. The conserved state vector and flux vector are
+\begin{equation}
+    \mathbf{U} =
+    \left[
+    \begin{array}{c}
+        A \\
+        Q
+    \end{array}
+    \right],
+    \qquad
+    \mathbf{F}(\mathbf{U}) =
+    \left[
+    \begin{array}{c}
+        Q \\
+        Q^2/A + g I_1
+    \end{array}
+    \right],
+\end{equation}
+where \(Q\) is discharge and \(g=9.81\ {\rm m\,s^{-2}}\). The governing equation
+for each channel segment is
+\begin{equation}
+    \frac{\partial \mathbf{U}}{\partial t}
+    +
+    \frac{\partial \mathbf{F}(\mathbf{U})}{\partial x}
+    =
+    \mathbf{S}_b + \mathbf{S}_f + \mathbf{S}_J,
+\end{equation}
+where \(\mathbf{S}_b\) is the bed-slope source term, \(\mathbf{S}_f\) is the
+Manning friction source term, and \(\mathbf{S}_J\) is the junction exchange term
+between the main canal and a branch canal.
+
+The local bed-slope source term is
+\begin{equation}
+    \mathbf{S}_{b,i} =
+    \left[
+    \begin{array}{c}
+        0 \\
+        g A_i S_{0,i}
+    \end{array}
+    \right].
+\end{equation}
+For interior cells, \(S_{0,i}\) is computed from neighboring bed elevations:
+\begin{equation}
+    S_{0,i} =
+    \frac{Z_{b,i-1} - Z_{b,i+1}}{x_{i+1}-x_{i-1}},
+    \qquad 1 \le i \le N-1.
+\end{equation}
+At the two channel boundaries, one-sided bed slopes are used. A minimum slope of
+\(5.0\times 10^{-5}\) is imposed to avoid unrealistically small Manning
+capacity in nearly flat local segments.
+
+\subsection{Finite-volume discretization and HLL flux}
+
+The Saint-Venant equations are advanced using an explicit finite-volume update
+with a Harten-Lax-van Leer (HLL) approximate Riemann flux. The intermediate
+state before friction correction is
+\begin{equation}
+    \mathbf{U}_i^{n+1,*}
+    =
+    \mathbf{U}_i^n
+    -
+    \frac{\Delta t}{\Delta x_i}
+    \left(
+        \mathbf{F}_{i+1/2}^n
+        -
+        \mathbf{F}_{i-1/2}^n
+    \right)
+    +
+    \Delta t\, \mathbf{S}_{b,i}^n
+    +
+    \Delta t\, \mathbf{S}_{J,i}^n .
+\end{equation}
+For left and right states \(\mathbf{U}_L\) and \(\mathbf{U}_R\), the HLL flux is
+\begin{equation}
+    \mathbf{F}_{\rm HLL}
+    =
+    \frac{
+        s_R \mathbf{F}(\mathbf{U}_L)
+        -
+        s_L \mathbf{F}(\mathbf{U}_R)
+        +
+        s_Ls_R(\mathbf{U}_R-\mathbf{U}_L)
+    }{s_R-s_L}.
+\end{equation}
+The wave-speed estimates are
+\begin{equation}
+    s_L = \min(u_L-c_L,\ u_R-c_R),
+\end{equation}
+\begin{equation}
+    s_R = \max(u_L+c_L,\ u_R+c_R),
+\end{equation}
+where \(u=Q/A\), and the shallow-water wave celerity is computed with hydraulic
+depth:
+\begin{equation}
+    c = \sqrt{gA/B}.
+\end{equation}
+
+The Manning friction term is treated with a local semi-implicit correction. The
+friction coefficient is
+\begin{equation}
+    C_f =
+    \frac{n^2 |Q|}
+    {A^2 R^{4/3}},
+\end{equation}
+and the corrected discharge is
+\begin{equation}
+    Q_i^{n+1}
+    =
+    \frac{Q_i^{n+1,*}}
+    {1+\Delta t\,g\,A_i^{n+1,*} C_{f,i}^n}.
+\end{equation}
+This treatment damps friction-induced numerical oscillations while retaining an
+explicit flux update. The model also enforces a minimum wet depth of 0.03 m and
+clips extreme discharges by a local wave-speed-based bound.
+
+\subsection{Boundary conditions and simulation settings}
+
+The upstream boundary is prescribed as a smooth inflow hydrograph that ramps
+from 0 to 80 \({\rm m^3\,s^{-1}}\) during the first 0.5 h:
+\begin{equation}
+    Q_{\rm in}(t) =
+    \left\{
+    \begin{array}{ll}
+        80 \times
+        \frac{1-\cos(\pi t/T_r)}{2},
+        & 0 < t < T_r, \\
+        80, & t \ge T_r,
+    \end{array}
+    \right.
+\end{equation}
+where \(T_r=0.5\) h. The upstream ghost-cell depth is the Manning normal depth
+compatible with the boundary discharge and the local bed slope. Downstream open
+boundaries use extrapolated states. The computational time step is
+\(\Delta t=1\) s, the output interval is 60 s, and the total simulation duration
+is 14 h.
+
+\subsection{Main-branch junction coupling}
+
+The earlier source-term-only representation of diversions was replaced by a
+main-branch network coupling. The main canal and the selected branch chains are
+both routed dynamically with the same Saint-Venant finite-volume scheme. At a
+diversion junction \(k\), the main-canal water level is
+\begin{equation}
+    H_{m,k} = Z_{b,m,k} + h_{m,k},
+\end{equation}
+and the branch inlet water level is
+\begin{equation}
+    H_{b,k} = Z_{b,b,k} + h_{b,k}.
+\end{equation}
+Only positive head difference from the main canal to the branch canal produces
+diversion flow. The entrance energy slope is
+\begin{equation}
+    S_{J,k} =
+    \frac{\max(H_{m,k}-H_{b,k},0)}{L_{J,k}},
+\end{equation}
+where \(L_{J,k}\) is the distance between the main-canal junction node and the
+first branch node. The corresponding energy-controlled branch capacity is
+\begin{equation}
+    Q_{{\rm energy},k}
+    =
+    \frac{1}{n_b}
+    A_b(h_J)
+    R_b(h_J)^{2/3}
+    S_{J,k}^{1/2},
+\end{equation}
+where \(h_J=\max(H_{m,k}-Z_{b,b,k},h_{\min})\) is the branch inlet depth implied
+by the main-canal water level.
+
+The safe branch capacity is estimated at 90\% of the branch design depth:
+\begin{equation}
+    Q_{{\rm safe},k}
+    =
+    \frac{1}{n_b}
+    A_b(0.9D_b)
+    R_b(0.9D_b)^{2/3}
+    S_{b,k}^{1/2}.
+\end{equation}
+The water-depth activation factor at the diversion gate is
+\begin{equation}
+    \phi(h) =
+    \left\{
+    \begin{array}{ll}
+        0, & h \le 0.2D, \\
+        \sqrt{\frac{h-0.2D}{0.6D-0.2D}}, & 0.2D < h < 0.6D, \\
+        1, & h \ge 0.6D.
+    \end{array}
+    \right.
+\end{equation}
+The actual diversion flow is then
+\begin{equation}
+    Q_{{\rm cap},k}
+    =
+    \phi(h_{m,k})
+    \min
+    \left(
+        Q_{{\rm max},k},
+        Q_{{\rm safe},k},
+        Q_{{\rm energy},k}
+    \right),
+\end{equation}
+\begin{equation}
+    Q_{{\rm div},k}
+    =
+    \min
+    \left[
+        Q_{{\rm cap},k},
+        \frac{W_{{\rm rem},k}}{\Delta t},
+        Q_{{\rm stor},m,k},
+        Q_{{\rm free},b,k}
+    \right].
+\end{equation}
+Here \(Q_{{\rm max},k}\) is the specified outlet capacity, \(W_{{\rm rem},k}\)
+is the remaining demand, \(Q_{{\rm stor},m,k}\) is the removable main-canal
+storage above the minimum wet depth, and \(Q_{{\rm free},b,k}\) is the
+remaining branch storage below the safe depth.
+
+The exchange is applied conservatively between the connected cells. For the
+main-canal junction cell,
+\begin{equation}
+    A_{m,i}^{n+1}
+    \leftarrow
+    A_{m,i}^{n+1}
+    -
+    \frac{Q_{{\rm div},k}\Delta t}{\Delta x_{m,i}},
+\end{equation}
+\begin{equation}
+    Q_{m,i}^{n+1}
+    \leftarrow
+    Q_{m,i}^{n+1}
+    -
+    \frac{Q_{{\rm div},k}u_{m,i}\Delta t}{\Delta x_{m,i}}.
+\end{equation}
+For the first branch cell,
+\begin{equation}
+    A_{b,1}^{n+1}
+    \leftarrow
+    A_{b,1}^{n+1}
+    +
+    \frac{Q_{{\rm div},k}\Delta t}{\Delta x_{b,1}},
+\end{equation}
+\begin{equation}
+    Q_{b,1}^{n+1}
+    \leftarrow
+    Q_{b,1}^{n+1}
+    +
+    \frac{Q_{{\rm div},k}u_{b,J}\Delta t}{\Delta x_{b,1}}.
+\end{equation}
+Thus, the branch water level can feed back on the diversion rate through
+\(H_{b,k}\). This is more physically consistent than prescribing the diversion
+as an isolated lateral sink, while still remaining a computationally light
+network-coupled approximation.
+
+\subsection{Dispatch assumptions}
+
+The diversion outlets at nodes 71, 89, 150, 194, 287, 349 and 383 are assigned
+maximum capacities of 20, 20, 5, 5, 12, 5 and 5 \({\rm m^3\,s^{-1}}\),
+respectively. The corresponding demand volumes are 250000, 300000, 60000,
+80000, 160000, 50000 and 40000 \({\rm m^3}\). The cumulative supplied volume is
+\begin{equation}
+    W_k(t_m) =
+    \sum_{j=1}^{m}
+    Q_{{\rm div},k}(t_j)\Delta t.
+\end{equation}
+Once \(W_k\) reaches the prescribed demand, the outlet is closed and its
+diversion flow is set to zero for the remainder of the simulation.
+
+\subsection{NumPy acceleration}
+
+The numerical kernel is implemented in Python with NumPy arrays. The main canal
+is advanced as one vectorized channel grid. The seven selected branch chains
+are concatenated into one \texttt{BranchNetwork}; internal branch interfaces are
+stored as index arrays, allowing all branch HLL fluxes to be evaluated in a
+single vectorized operation. Junction indices map each diversion node to the
+first cell of its branch chain. This design keeps the network coupling explicit
+and readable while avoiding Python loops over individual branch cells.
+
+\subsection{Stability assessment and postprocessing}
+
+Because the flux update is explicit, the numerical stability is monitored by
+the Courant number
+\begin{equation}
+    {\rm CFL}
+    =
+    \max_i
+    \frac{(|u_i|+c_i)\Delta t}{\Delta x_i}.
+\end{equation}
+With \(\Delta t=1\) s and the current nonuniform grid, the estimated CFL remains
+well below 1 under the simulated 80 \({\rm m^3\,s^{-1}}\) inflow condition. The
+semi-implicit Manning term, minimum wet depth, branch freeboard limit and local
+discharge clipping further reduce numerical instability near low-depth cells
+and diversion junctions.
+
+Postprocessing is separated from simulation. The simulator module runs the
+network-coupled hydraulic and dispatch model only. The postprocess module
+generates diversion hydrographs, cumulative supplied volumes, key-node water
+depth time series, and maximum-depth envelope diagnostics. The maximum-depth
+envelope reuses the same network-coupled dispatch result and reports the largest
+water depth reached at every main-canal node during the simulation.

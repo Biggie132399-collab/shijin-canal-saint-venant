@@ -1,0 +1,801 @@
+{
+  "description": "Local equivalent-reach Pati RSR applicability evaluation between diversion/control nodes.",
+  "figures": [
+    "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/pati_local_reach_applicability_results/figures/fig_pati_local_reach_applicability.png",
+    "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/pati_local_reach_applicability_results/figures/fig_pati_local_reach_applicability_table.png"
+  ],
+  "csv": "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/pati_local_reach_applicability_results/pati_local_reach_applicability.csv",
+  "rows": [
+    {
+      "reach": "89→71",
+      "downstream_node": 89,
+      "upstream_node": 71,
+      "length_m": 767.2302346993588,
+      "slope_eq": 0.00018628392845740515,
+      "bottom_width_eq_m": 25.0,
+      "side_slope_eq": 0.48773258856586144,
+      "depth_eq_m": 3.84,
+      "manning_eq": 0.025,
+      "default_factor": {
+        "routing_celerity_factor": 1.5,
+        "depth_rmse_m": 0.07205655427994001,
+        "depth_nse": 0.5858116172541772,
+        "q_rmse_m3s": 10.728559730384964,
+        "q_nse": -3.1575308321920135,
+        "depth_peak_time_error_h": 0.0,
+        "q_peak_time_error_h": -8.25,
+        "max_depth_error_m": 0.21352117986407793,
+        "max_q_error_m3s": 27.443218148106837
+      },
+      "best_factor": {
+        "routing_celerity_factor": 0.75,
+        "depth_rmse_m": 0.07059034701127834,
+        "depth_nse": 0.6024959423187622,
+        "q_rmse_m3s": 10.52229483923965,
+        "q_nse": -2.9992040654769085,
+        "depth_peak_time_error_h": 0.0,
+        "q_peak_time_error_h": -8.25,
+        "max_depth_error_m": 0.14872804535746376,
+        "max_q_error_m3s": 14.367916264451992
+      },
+      "applicability": "仅水深可参考",
+      "factor_rows": [
+        {
+          "routing_celerity_factor": 0.75,
+          "depth_rmse_m": 0.07059034701127834,
+          "depth_nse": 0.6024959423187622,
+          "q_rmse_m3s": 10.52229483923965,
+          "q_nse": -2.9992040654769085,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -8.25,
+          "max_depth_error_m": 0.14872804535746376,
+          "max_q_error_m3s": 14.367916264451992
+        },
+        {
+          "routing_celerity_factor": 1.0,
+          "depth_rmse_m": 0.07164263167980542,
+          "depth_nse": 0.5905564879301596,
+          "q_rmse_m3s": 10.659038005249501,
+          "q_nse": -3.103823302254301,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -8.25,
+          "max_depth_error_m": 0.16815867656942318,
+          "max_q_error_m3s": 19.178608856780556
+        },
+        {
+          "routing_celerity_factor": 1.25,
+          "depth_rmse_m": 0.07194034652329942,
+          "depth_nse": 0.587146487937009,
+          "q_rmse_m3s": 10.702783635152866,
+          "q_nse": -3.1375773290464597,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -8.25,
+          "max_depth_error_m": 0.18886513233249125,
+          "max_q_error_m3s": 23.523647563750558
+        },
+        {
+          "routing_celerity_factor": 1.5,
+          "depth_rmse_m": 0.07205655427994001,
+          "depth_nse": 0.5858116172541772,
+          "q_rmse_m3s": 10.728559730384964,
+          "q_nse": -3.1575308321920135,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -8.25,
+          "max_depth_error_m": 0.21352117986407793,
+          "max_q_error_m3s": 27.443218148106837
+        },
+        {
+          "routing_celerity_factor": 2.0,
+          "depth_rmse_m": 0.07231789235690794,
+          "depth_nse": 0.5828017734649025,
+          "q_rmse_m3s": 10.818638101085785,
+          "q_nse": -3.227638247021714,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -8.25,
+          "max_depth_error_m": 0.25870908718140195,
+          "max_q_error_m3s": 34.15703868217838
+        },
+        {
+          "routing_celerity_factor": 3.0,
+          "depth_rmse_m": 0.07312941162237745,
+          "depth_nse": 0.573386012111706,
+          "q_rmse_m3s": 11.060914291250377,
+          "q_nse": -3.419108715751711,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -7.916666666666667,
+          "max_depth_error_m": 0.3255940161858035,
+          "max_q_error_m3s": 43.1009518916855
+        },
+        {
+          "routing_celerity_factor": 4.0,
+          "depth_rmse_m": 0.07321795478760733,
+          "depth_nse": 0.5723523207496974,
+          "q_rmse_m3s": 11.213621136267763,
+          "q_nse": -3.5419713411002265,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -7.916666666666667,
+          "max_depth_error_m": 0.3387866093343994,
+          "max_q_error_m3s": 48.148119742632275
+        }
+      ]
+    },
+    {
+      "reach": "150→89",
+      "downstream_node": 150,
+      "upstream_node": 89,
+      "length_m": 2678.2827973736885,
+      "slope_eq": 0.00043616122492568643,
+      "bottom_width_eq_m": 25.0,
+      "side_slope_eq": 0.4877325885658615,
+      "depth_eq_m": 3.84,
+      "manning_eq": 0.025,
+      "default_factor": {
+        "routing_celerity_factor": 1.5,
+        "depth_rmse_m": 0.511626209142528,
+        "depth_nse": -20.42458183904616,
+        "q_rmse_m3s": 44.550262276161796,
+        "q_nse": -70.22392625269131,
+        "depth_peak_time_error_h": 0.16666666666666666,
+        "q_peak_time_error_h": 0.08333333333333333,
+        "max_depth_error_m": 1.7547727428978028,
+        "max_q_error_m3s": 239.39250626597382
+      },
+      "best_factor": {
+        "routing_celerity_factor": 4.0,
+        "depth_rmse_m": 0.5048310532913427,
+        "depth_nse": -19.859260562049588,
+        "q_rmse_m3s": 42.38496643363577,
+        "q_nse": -63.46872295860922,
+        "depth_peak_time_error_h": 0.16666666666666666,
+        "q_peak_time_error_h": 0.08333333333333333,
+        "max_depth_error_m": 1.32701306660781,
+        "max_q_error_m3s": 136.04304571227684
+      },
+      "applicability": "不适用",
+      "factor_rows": [
+        {
+          "routing_celerity_factor": 0.75,
+          "depth_rmse_m": 0.5360866224983409,
+          "depth_nse": -22.52213434496017,
+          "q_rmse_m3s": 52.44583098158626,
+          "q_nse": -97.7068567650795,
+          "depth_peak_time_error_h": 0.16666666666666666,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 1.8273049286323937,
+          "max_q_error_m3s": 348.75167810536567
+        },
+        {
+          "routing_celerity_factor": 1.0,
+          "depth_rmse_m": 0.5196602808481104,
+          "depth_nse": -21.102725674392634,
+          "q_rmse_m3s": 48.16725091839731,
+          "q_nse": -82.25859941400564,
+          "depth_peak_time_error_h": 0.16666666666666666,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 1.778733615392012,
+          "max_q_error_m3s": 312.4285838595594
+        },
+        {
+          "routing_celerity_factor": 1.25,
+          "depth_rmse_m": 0.513883553701124,
+          "depth_nse": -20.61405357741167,
+          "q_rmse_m3s": 45.63325654686368,
+          "q_nse": -73.72885114875595,
+          "depth_peak_time_error_h": 0.16666666666666666,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 1.7989667018560116,
+          "max_q_error_m3s": 270.46680476655604
+        },
+        {
+          "routing_celerity_factor": 1.5,
+          "depth_rmse_m": 0.511626209142528,
+          "depth_nse": -20.42458183904616,
+          "q_rmse_m3s": 44.550262276161796,
+          "q_nse": -70.22392625269131,
+          "depth_peak_time_error_h": 0.16666666666666666,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 1.7547727428978028,
+          "max_q_error_m3s": 239.39250626597382
+        },
+        {
+          "routing_celerity_factor": 2.0,
+          "depth_rmse_m": 0.5090809154213217,
+          "depth_nse": -20.21194141068822,
+          "q_rmse_m3s": 43.522010582985295,
+          "q_nse": -66.97407100145985,
+          "depth_peak_time_error_h": 0.16666666666666666,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 1.6364982681099272,
+          "max_q_error_m3s": 197.48933500801647
+        },
+        {
+          "routing_celerity_factor": 3.0,
+          "depth_rmse_m": 0.5062077426169548,
+          "depth_nse": -19.97318333619703,
+          "q_rmse_m3s": 42.68632510939487,
+          "q_nse": -64.38873202128849,
+          "depth_peak_time_error_h": 0.16666666666666666,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 1.4485716976390859,
+          "max_q_error_m3s": 156.10287585223287
+        },
+        {
+          "routing_celerity_factor": 4.0,
+          "depth_rmse_m": 0.5048310532913427,
+          "depth_nse": -19.859260562049588,
+          "q_rmse_m3s": 42.38496643363577,
+          "q_nse": -63.46872295860922,
+          "depth_peak_time_error_h": 0.16666666666666666,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 1.32701306660781,
+          "max_q_error_m3s": 136.04304571227684
+        }
+      ]
+    },
+    {
+      "reach": "194→150",
+      "downstream_node": 194,
+      "upstream_node": 150,
+      "length_m": 1919.9799305545175,
+      "slope_eq": 0.00026041938878787805,
+      "bottom_width_eq_m": 25.0,
+      "side_slope_eq": 0.4877325885658615,
+      "depth_eq_m": 3.8399999999999994,
+      "manning_eq": 0.025,
+      "default_factor": {
+        "routing_celerity_factor": 1.5,
+        "depth_rmse_m": 0.27174796353484865,
+        "depth_nse": -3.412778986951605,
+        "q_rmse_m3s": 36.547497770473875,
+        "q_nse": -40.21923119959631,
+        "depth_peak_time_error_h": -0.16666666666666669,
+        "q_peak_time_error_h": -8.666666666666666,
+        "max_depth_error_m": 1.1829967175531948,
+        "max_q_error_m3s": 223.11751983510072
+      },
+      "best_factor": {
+        "routing_celerity_factor": 4.0,
+        "depth_rmse_m": 0.2799677178025939,
+        "depth_nse": -3.683769284900821,
+        "q_rmse_m3s": 31.51182176825246,
+        "q_nse": -29.643023452466654,
+        "depth_peak_time_error_h": -0.16666666666666669,
+        "q_peak_time_error_h": -8.666666666666666,
+        "max_depth_error_m": 1.1917755473780436,
+        "max_q_error_m3s": 74.54683660198575
+      },
+      "applicability": "不适用",
+      "factor_rows": [
+        {
+          "routing_celerity_factor": 0.75,
+          "depth_rmse_m": 0.2626367524006026,
+          "depth_nse": -3.1218347768303376,
+          "q_rmse_m3s": 39.47335478462743,
+          "q_nse": -47.08312293862984,
+          "depth_peak_time_error_h": 0.25,
+          "q_peak_time_error_h": -8.666666666666666,
+          "max_depth_error_m": 1.0375684411662358,
+          "max_q_error_m3s": 213.30060619638186
+        },
+        {
+          "routing_celerity_factor": 1.0,
+          "depth_rmse_m": 0.2758317763655724,
+          "depth_nse": -3.546405544539116,
+          "q_rmse_m3s": 39.181373423038494,
+          "q_nse": -46.37441947566737,
+          "depth_peak_time_error_h": 0.16666666666666669,
+          "q_peak_time_error_h": -8.666666666666666,
+          "max_depth_error_m": 1.2895700673580452,
+          "max_q_error_m3s": 243.10957914587226
+        },
+        {
+          "routing_celerity_factor": 1.25,
+          "depth_rmse_m": 0.2762918163533278,
+          "depth_nse": -3.5615834369016373,
+          "q_rmse_m3s": 38.074019308753066,
+          "q_nse": -43.73444383917124,
+          "depth_peak_time_error_h": -0.16666666666666669,
+          "q_peak_time_error_h": -8.666666666666666,
+          "max_depth_error_m": 1.1118276304415673,
+          "max_q_error_m3s": 242.721040838793
+        },
+        {
+          "routing_celerity_factor": 1.5,
+          "depth_rmse_m": 0.27174796353484865,
+          "depth_nse": -3.412778986951605,
+          "q_rmse_m3s": 36.547497770473875,
+          "q_nse": -40.21923119959631,
+          "depth_peak_time_error_h": -0.16666666666666669,
+          "q_peak_time_error_h": -8.666666666666666,
+          "max_depth_error_m": 1.1829967175531948,
+          "max_q_error_m3s": 223.11751983510072
+        },
+        {
+          "routing_celerity_factor": 2.0,
+          "depth_rmse_m": 0.2694561161563171,
+          "depth_nse": -3.338660535855892,
+          "q_rmse_m3s": 33.94518919025347,
+          "q_nse": -34.558305572188154,
+          "depth_peak_time_error_h": -0.16666666666666669,
+          "q_peak_time_error_h": -8.666666666666666,
+          "max_depth_error_m": 1.232589400959824,
+          "max_q_error_m3s": 170.02845910558466
+        },
+        {
+          "routing_celerity_factor": 3.0,
+          "depth_rmse_m": 0.27658391214441036,
+          "depth_nse": -3.5712335500120442,
+          "q_rmse_m3s": 31.872755972307836,
+          "q_nse": -30.349009685516705,
+          "depth_peak_time_error_h": -0.16666666666666669,
+          "q_peak_time_error_h": -8.666666666666666,
+          "max_depth_error_m": 1.2212373454955499,
+          "max_q_error_m3s": 100.7095964355481
+        },
+        {
+          "routing_celerity_factor": 4.0,
+          "depth_rmse_m": 0.2799677178025939,
+          "depth_nse": -3.683769284900821,
+          "q_rmse_m3s": 31.51182176825246,
+          "q_nse": -29.643023452466654,
+          "depth_peak_time_error_h": -0.16666666666666669,
+          "q_peak_time_error_h": -8.666666666666666,
+          "max_depth_error_m": 1.1917755473780436,
+          "max_q_error_m3s": 74.54683660198575
+        }
+      ]
+    },
+    {
+      "reach": "287→194",
+      "downstream_node": 287,
+      "upstream_node": 194,
+      "length_m": 4079.4095090281207,
+      "slope_eq": 5e-05,
+      "bottom_width_eq_m": 25.0,
+      "side_slope_eq": 0.4877325885658615,
+      "depth_eq_m": 3.84,
+      "manning_eq": 0.025,
+      "default_factor": {
+        "routing_celerity_factor": 1.5,
+        "depth_rmse_m": 0.3680556098646391,
+        "depth_nse": -8.328684586474806,
+        "q_rmse_m3s": 64.35973044782945,
+        "q_nse": -50.60607760274657,
+        "depth_peak_time_error_h": -0.4166666666666667,
+        "q_peak_time_error_h": -8.916666666666666,
+        "max_depth_error_m": 1.7307502981249847,
+        "max_q_error_m3s": 569.0393399928801
+      },
+      "best_factor": {
+        "routing_celerity_factor": 4.0,
+        "depth_rmse_m": 0.3968770135992874,
+        "depth_nse": -9.846894555258832,
+        "q_rmse_m3s": 31.221254437285964,
+        "q_nse": -11.144317566689214,
+        "depth_peak_time_error_h": -0.5,
+        "q_peak_time_error_h": -8.666666666666666,
+        "max_depth_error_m": 2.3869156452914613,
+        "max_q_error_m3s": 72.42343326170376
+      },
+      "applicability": "不适用",
+      "factor_rows": [
+        {
+          "routing_celerity_factor": 0.75,
+          "depth_rmse_m": 0.34305385296244384,
+          "depth_nse": -7.104348889196073,
+          "q_rmse_m3s": 61.849504712194125,
+          "q_nse": -46.65899394978609,
+          "depth_peak_time_error_h": -0.4166666666666667,
+          "q_peak_time_error_h": -8.916666666666666,
+          "max_depth_error_m": 2.6949609279004902,
+          "max_q_error_m3s": 663.6305074220137
+        },
+        {
+          "routing_celerity_factor": 1.0,
+          "depth_rmse_m": 0.37743731626902155,
+          "depth_nse": -8.810320530916249,
+          "q_rmse_m3s": 66.66916861118844,
+          "q_nse": -54.37611664978022,
+          "depth_peak_time_error_h": -0.4166666666666667,
+          "q_peak_time_error_h": -8.916666666666666,
+          "max_depth_error_m": 2.6949609279004902,
+          "max_q_error_m3s": 707.584068722362
+        },
+        {
+          "routing_celerity_factor": 1.25,
+          "depth_rmse_m": 0.3935659532512674,
+          "depth_nse": -9.666662862328199,
+          "q_rmse_m3s": 75.05579680012428,
+          "q_nse": -69.18444948969395,
+          "depth_peak_time_error_h": -0.4166666666666667,
+          "q_peak_time_error_h": -8.833333333333334,
+          "max_depth_error_m": 2.6949609279004902,
+          "max_q_error_m3s": 687.9035684898311
+        },
+        {
+          "routing_celerity_factor": 1.5,
+          "depth_rmse_m": 0.3680556098646391,
+          "depth_nse": -8.328684586474806,
+          "q_rmse_m3s": 64.35973044782945,
+          "q_nse": -50.60607760274657,
+          "depth_peak_time_error_h": -0.4166666666666667,
+          "q_peak_time_error_h": -8.916666666666666,
+          "max_depth_error_m": 1.7307502981249847,
+          "max_q_error_m3s": 569.0393399928801
+        },
+        {
+          "routing_celerity_factor": 2.0,
+          "depth_rmse_m": 0.37910960658286685,
+          "depth_nse": -8.897445185561642,
+          "q_rmse_m3s": 36.97474743789871,
+          "q_nse": -16.032674634321907,
+          "depth_peak_time_error_h": -0.4166666666666667,
+          "q_peak_time_error_h": -8.833333333333334,
+          "max_depth_error_m": 1.577925799799206,
+          "max_q_error_m3s": 214.16331813050476
+        },
+        {
+          "routing_celerity_factor": 3.0,
+          "depth_rmse_m": 0.4050122658948782,
+          "depth_nse": -10.296135114961784,
+          "q_rmse_m3s": 30.8205560646476,
+          "q_nse": -10.834593851815436,
+          "depth_peak_time_error_h": -0.5,
+          "q_peak_time_error_h": -8.666666666666666,
+          "max_depth_error_m": 2.4598935713019205,
+          "max_q_error_m3s": 88.2470747271571
+        },
+        {
+          "routing_celerity_factor": 4.0,
+          "depth_rmse_m": 0.3968770135992874,
+          "depth_nse": -9.846894555258832,
+          "q_rmse_m3s": 31.221254437285964,
+          "q_nse": -11.144317566689214,
+          "depth_peak_time_error_h": -0.5,
+          "q_peak_time_error_h": -8.666666666666666,
+          "max_depth_error_m": 2.3869156452914613,
+          "max_q_error_m3s": 72.42343326170376
+        }
+      ]
+    },
+    {
+      "reach": "349→287",
+      "downstream_node": 349,
+      "upstream_node": 287,
+      "length_m": 2701.561793929319,
+      "slope_eq": 0.0001470901478487117,
+      "bottom_width_eq_m": 25.0,
+      "side_slope_eq": 0.4877325885658615,
+      "depth_eq_m": 3.84,
+      "manning_eq": 0.025,
+      "default_factor": {
+        "routing_celerity_factor": 1.5,
+        "depth_rmse_m": 0.10221401787954666,
+        "depth_nse": 0.49130103373084955,
+        "q_rmse_m3s": 9.554388132855694,
+        "q_nse": -1.8243347514943076,
+        "depth_peak_time_error_h": 0.08333333333333333,
+        "q_peak_time_error_h": 0.08333333333333333,
+        "max_depth_error_m": 0.665625889777417,
+        "max_q_error_m3s": 46.20126799442795
+      },
+      "best_factor": {
+        "routing_celerity_factor": 4.0,
+        "depth_rmse_m": 0.0747829960230833,
+        "depth_nse": 0.727701245141499,
+        "q_rmse_m3s": 7.164726753827558,
+        "q_nse": -0.5882163922024621,
+        "depth_peak_time_error_h": 0.08333333333333333,
+        "q_peak_time_error_h": 0.08333333333333333,
+        "max_depth_error_m": 0.6826153766879393,
+        "max_q_error_m3s": 47.169927506114135
+      },
+      "applicability": "仅水深可参考",
+      "factor_rows": [
+        {
+          "routing_celerity_factor": 0.75,
+          "depth_rmse_m": 0.11657309301577044,
+          "depth_nse": 0.33833741957325525,
+          "q_rmse_m3s": 10.936600929655295,
+          "q_nse": -2.7006255288968184,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 0.6645813262830034,
+          "max_q_error_m3s": 39.59889262899031
+        },
+        {
+          "routing_celerity_factor": 1.0,
+          "depth_rmse_m": 0.11330907735569419,
+          "depth_nse": 0.3748714391727176,
+          "q_rmse_m3s": 10.710204417574982,
+          "q_nse": -2.548999432715244,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 0.664504440106453,
+          "max_q_error_m3s": 42.23587950772429
+        },
+        {
+          "routing_celerity_factor": 1.25,
+          "depth_rmse_m": 0.10810298747463697,
+          "depth_nse": 0.43099599005722145,
+          "q_rmse_m3s": 10.17263934114786,
+          "q_nse": -2.2016783903944686,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 0.6649266560600617,
+          "max_q_error_m3s": 44.49630804514999
+        },
+        {
+          "routing_celerity_factor": 1.5,
+          "depth_rmse_m": 0.10221401787954666,
+          "depth_nse": 0.49130103373084955,
+          "q_rmse_m3s": 9.554388132855694,
+          "q_nse": -1.8243347514943076,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 0.665625889777417,
+          "max_q_error_m3s": 46.20126799442795
+        },
+        {
+          "routing_celerity_factor": 2.0,
+          "depth_rmse_m": 0.09148344830091,
+          "depth_nse": 0.5925024637851477,
+          "q_rmse_m3s": 8.809996451624363,
+          "q_nse": -1.40138546148108,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 0.6675569913148403,
+          "max_q_error_m3s": 47.218419473369806
+        },
+        {
+          "routing_celerity_factor": 3.0,
+          "depth_rmse_m": 0.07887782024067115,
+          "depth_nse": 0.6970648026228619,
+          "q_rmse_m3s": 7.943401786326578,
+          "q_nse": -0.952196233103255,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 0.6733380618537663,
+          "max_q_error_m3s": 43.44554313756814
+        },
+        {
+          "routing_celerity_factor": 4.0,
+          "depth_rmse_m": 0.0747829960230833,
+          "depth_nse": 0.727701245141499,
+          "q_rmse_m3s": 7.164726753827558,
+          "q_nse": -0.5882163922024621,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": 0.08333333333333333,
+          "max_depth_error_m": 0.6826153766879393,
+          "max_q_error_m3s": 47.169927506114135
+        }
+      ]
+    },
+    {
+      "reach": "383→349",
+      "downstream_node": 383,
+      "upstream_node": 349,
+      "length_m": 1477.5201739786753,
+      "slope_eq": 7.868411062289871e-05,
+      "bottom_width_eq_m": 25.0,
+      "side_slope_eq": 0.4877325885658615,
+      "depth_eq_m": 3.8400000000000003,
+      "manning_eq": 0.025,
+      "default_factor": {
+        "routing_celerity_factor": 1.5,
+        "depth_rmse_m": 0.2107470302749411,
+        "depth_nse": -0.6479003615420176,
+        "q_rmse_m3s": 29.842428255949827,
+        "q_nse": -30.864988810360963,
+        "depth_peak_time_error_h": -0.16666666666666666,
+        "q_peak_time_error_h": -0.25,
+        "max_depth_error_m": 0.5395283320938247,
+        "max_q_error_m3s": 48.975712724167764
+      },
+      "best_factor": {
+        "routing_celerity_factor": 4.0,
+        "depth_rmse_m": 0.19585672569772772,
+        "depth_nse": -0.42326248286218093,
+        "q_rmse_m3s": 25.162311482536044,
+        "q_nse": -21.65408479217494,
+        "depth_peak_time_error_h": -0.16666666666666666,
+        "q_peak_time_error_h": 0.0,
+        "max_depth_error_m": 0.7339688782338163,
+        "max_q_error_m3s": 44.355868153604376
+      },
+      "applicability": "不适用",
+      "factor_rows": [
+        {
+          "routing_celerity_factor": 0.75,
+          "depth_rmse_m": 0.1983388437290309,
+          "depth_nse": -0.4595654556576838,
+          "q_rmse_m3s": 26.551264470569762,
+          "q_nse": -24.224111104526386,
+          "depth_peak_time_error_h": -0.16666666666666666,
+          "q_peak_time_error_h": -0.25,
+          "max_depth_error_m": 0.46591671831442083,
+          "max_q_error_m3s": 43.77208156236516
+        },
+        {
+          "routing_celerity_factor": 1.0,
+          "depth_rmse_m": 0.206155755460571,
+          "depth_nse": -0.5768811072829019,
+          "q_rmse_m3s": 28.290026793028357,
+          "q_nse": -27.635987946580048,
+          "depth_peak_time_error_h": -0.16666666666666666,
+          "q_peak_time_error_h": -0.25,
+          "max_depth_error_m": 0.4860942176531342,
+          "max_q_error_m3s": 46.30145585837222
+        },
+        {
+          "routing_celerity_factor": 1.25,
+          "depth_rmse_m": 0.20935947179197603,
+          "depth_nse": -0.6262722439526756,
+          "q_rmse_m3s": 29.281597732906732,
+          "q_nse": -29.67856161084375,
+          "depth_peak_time_error_h": -0.16666666666666666,
+          "q_peak_time_error_h": -0.25,
+          "max_depth_error_m": 0.5093109702722036,
+          "max_q_error_m3s": 48.15819174191388
+        },
+        {
+          "routing_celerity_factor": 1.5,
+          "depth_rmse_m": 0.2107470302749411,
+          "depth_nse": -0.6479003615420176,
+          "q_rmse_m3s": 29.842428255949827,
+          "q_nse": -30.864988810360963,
+          "depth_peak_time_error_h": -0.16666666666666666,
+          "q_peak_time_error_h": -0.25,
+          "max_depth_error_m": 0.5395283320938247,
+          "max_q_error_m3s": 48.975712724167764
+        },
+        {
+          "routing_celerity_factor": 2.0,
+          "depth_rmse_m": 0.21094996912139768,
+          "depth_nse": -0.6510755808019844,
+          "q_rmse_m3s": 29.051413041139583,
+          "q_nse": -29.19812479079153,
+          "depth_peak_time_error_h": -0.16666666666666666,
+          "q_peak_time_error_h": -0.25,
+          "max_depth_error_m": 0.6307562856817444,
+          "max_q_error_m3s": 56.810031072812606
+        },
+        {
+          "routing_celerity_factor": 3.0,
+          "depth_rmse_m": 0.20510604768982194,
+          "depth_nse": -0.5608636044484743,
+          "q_rmse_m3s": 25.551582296725613,
+          "q_nse": -22.36044179241311,
+          "depth_peak_time_error_h": -0.16666666666666666,
+          "q_peak_time_error_h": 0.0,
+          "max_depth_error_m": 0.8435243354331963,
+          "max_q_error_m3s": 51.49353810385999
+        },
+        {
+          "routing_celerity_factor": 4.0,
+          "depth_rmse_m": 0.19585672569772772,
+          "depth_nse": -0.42326248286218093,
+          "q_rmse_m3s": 25.162311482536044,
+          "q_nse": -21.65408479217494,
+          "depth_peak_time_error_h": -0.16666666666666666,
+          "q_peak_time_error_h": 0.0,
+          "max_depth_error_m": 0.7339688782338163,
+          "max_q_error_m3s": 44.355868153604376
+        }
+      ]
+    },
+    {
+      "reach": "456→383",
+      "downstream_node": 456,
+      "upstream_node": 383,
+      "length_m": 3202.282652488644,
+      "slope_eq": 0.00023619698745324332,
+      "bottom_width_eq_m": 25.0,
+      "side_slope_eq": 0.48773258856586155,
+      "depth_eq_m": 3.8399999999999994,
+      "manning_eq": 0.025,
+      "default_factor": {
+        "routing_celerity_factor": 1.5,
+        "depth_rmse_m": 0.5917117501180512,
+        "depth_nse": -11.4138217049952,
+        "q_rmse_m3s": 46.192652347647034,
+        "q_nse": -55.93091558523637,
+        "depth_peak_time_error_h": 0.0,
+        "q_peak_time_error_h": -0.25,
+        "max_depth_error_m": 0.776856919068875,
+        "max_q_error_m3s": 91.33754503860966
+      },
+      "best_factor": {
+        "routing_celerity_factor": 4.0,
+        "depth_rmse_m": 0.5831326233175006,
+        "depth_nse": -11.056459561379112,
+        "q_rmse_m3s": 21.665617956732632,
+        "q_nse": -11.524042424455772,
+        "depth_peak_time_error_h": 0.0,
+        "q_peak_time_error_h": -0.08333333333333334,
+        "max_depth_error_m": 0.8126625025710446,
+        "max_q_error_m3s": 66.17111485242218
+      },
+      "applicability": "不适用",
+      "factor_rows": [
+        {
+          "routing_celerity_factor": 0.75,
+          "depth_rmse_m": 0.5775203637842679,
+          "depth_nse": -10.825505684835662,
+          "q_rmse_m3s": 27.914544119850483,
+          "q_nse": -19.790428863875878,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": -0.16666666666666669,
+          "max_depth_error_m": 1.3590084929716608,
+          "max_q_error_m3s": 232.6504243896368
+        },
+        {
+          "routing_celerity_factor": 1.0,
+          "depth_rmse_m": 0.5851325306983624,
+          "depth_nse": -11.139298861835886,
+          "q_rmse_m3s": 23.85527611431056,
+          "q_nse": -14.18347798478465,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": -0.16666666666666669,
+          "max_depth_error_m": 0.6680778586532801,
+          "max_q_error_m3s": 104.54834692622333
+        },
+        {
+          "routing_celerity_factor": 1.25,
+          "depth_rmse_m": 0.589870055837805,
+          "depth_nse": -11.336666283017237,
+          "q_rmse_m3s": 29.881967579470498,
+          "q_nse": -22.824332914233192,
+          "depth_peak_time_error_h": 0.08333333333333333,
+          "q_peak_time_error_h": -0.16666666666666669,
+          "max_depth_error_m": 0.7141952482974199,
+          "max_q_error_m3s": 70.38004668446312
+        },
+        {
+          "routing_celerity_factor": 1.5,
+          "depth_rmse_m": 0.5917117501180512,
+          "depth_nse": -11.4138217049952,
+          "q_rmse_m3s": 46.192652347647034,
+          "q_nse": -55.93091558523637,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -0.25,
+          "max_depth_error_m": 0.776856919068875,
+          "max_q_error_m3s": 91.33754503860966
+        },
+        {
+          "routing_celerity_factor": 2.0,
+          "depth_rmse_m": 0.5908669182593116,
+          "depth_nse": -11.378398696759602,
+          "q_rmse_m3s": 57.91464007801369,
+          "q_nse": -88.49094457278807,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -0.25,
+          "max_depth_error_m": 0.8384658172355359,
+          "max_q_error_m3s": 100.2876061338955
+        },
+        {
+          "routing_celerity_factor": 3.0,
+          "depth_rmse_m": 0.5861969654934728,
+          "depth_nse": -11.183505069436803,
+          "q_rmse_m3s": 57.87678384937449,
+          "q_nse": -88.37399029557984,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -0.25,
+          "max_depth_error_m": 0.8503455054501636,
+          "max_q_error_m3s": 100.2876061338955
+        },
+        {
+          "routing_celerity_factor": 4.0,
+          "depth_rmse_m": 0.5831326233175006,
+          "depth_nse": -11.056459561379112,
+          "q_rmse_m3s": 21.665617956732632,
+          "q_nse": -11.524042424455772,
+          "depth_peak_time_error_h": 0.0,
+          "q_peak_time_error_h": -0.08333333333333334,
+          "max_depth_error_m": 0.8126625025710446,
+          "max_q_error_m3s": 66.17111485242218
+        }
+      ]
+    }
+  ]
+}

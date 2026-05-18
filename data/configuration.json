@@ -1,0 +1,12 @@
+{
+    "time step" : 1.0,
+    "start" : 0.0,
+    "stop" : 14.0,
+    "ramp hours" : 0.5,
+    "target head flow m3s" : 80.0,
+    "initial depth m" : 0.08,
+    "min depth m" : 0.03,
+    "output interval seconds" : 60.0,
+    "safe depth ratio" : 0.90,
+    "min bed slope" : 5.0e-5
+}

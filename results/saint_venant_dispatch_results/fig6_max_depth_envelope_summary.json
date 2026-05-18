@@ -1,0 +1,13 @@
+{
+  "figure": "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/saint_venant_dispatch_results/figures/fig6_max_depth_envelope.png",
+  "csv": "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/saint_venant_dispatch_results/fig6_max_depth_envelope.csv",
+  "safe_depth_rule": "h_safe=0.90D",
+  "max_depth": {
+    "node": 194,
+    "distance_km": 8.480626743860523,
+    "hmax_m": 3.0161369085950165,
+    "time_h": 14.0
+  },
+  "num_exceed_safe_nodes": 0,
+  "num_exceed_design_nodes": 0
+}

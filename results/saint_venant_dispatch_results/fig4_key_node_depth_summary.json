@@ -1,0 +1,17 @@
+{
+  "figure": "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/saint_venant_dispatch_results/figures/fig4_key_node_depth_process.png",
+  "csv": "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/saint_venant_dispatch_results/fig4_key_node_depth_timeseries.csv",
+  "model": "1-D Saint-Venant finite-volume HLL forward model with semi-implicit Manning friction",
+  "plotted_variable": "hydraulic depth h at key nodes",
+  "unit": "m",
+  "key_nodes": [
+    0,
+    71,
+    89,
+    194,
+    287,
+    383,
+    456
+  ],
+  "note": "Water level Z is saved as bed elevation plus hydraulic depth."
+}
