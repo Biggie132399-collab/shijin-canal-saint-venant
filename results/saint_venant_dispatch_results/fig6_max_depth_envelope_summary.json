@@ -4,10 +4,10 @@
   "safe_depth_rule": "h_safe=0.90D",
   "max_depth": {
     "node": 194,
-    "distance_km": 8.480626743860523,
-    "hmax_m": 3.0161369085950165,
+    "distance_km": 8.480626743999998,
+    "hmax_m": 3.4678470965577475,
     "time_h": 14.0
   },
-  "num_exceed_safe_nodes": 0,
+  "num_exceed_safe_nodes": 218,
   "num_exceed_design_nodes": 0
 }

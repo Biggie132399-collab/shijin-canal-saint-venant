@@ -56,6 +56,20 @@ def _config_float(data: Mapping[str, object], *keys: str, default: float) -> flo
     return default
 
 
+def _config_int(data: Mapping[str, object], *keys: str, default: int) -> int:
+    for key in keys:
+        if key in data:
+            return int(data[key])
+    return default
+
+
+def _config_str(data: Mapping[str, object], *keys: str, default: str) -> str:
+    for key in keys:
+        if key in data:
+            return str(data[key])
+    return default
+
+
 def _duration_hours(data: Mapping[str, object], default: float = 14.0) -> float:
     if "duration hours" in data or "duration_hours" in data:
         return _config_float(data, "duration hours", "duration_hours", default=default)
@@ -83,8 +97,10 @@ class BranchLimit:
 
 @dataclass
 class Config:
+    solver: str = _config_str(_CONFIG_DEFAULTS, "solver", "scheme", default="implicit-network")
     start_hours: float = _config_float(_CONFIG_DEFAULTS, "start", "start_hours", default=0.0)
     dt_seconds: float = _config_float(_CONFIG_DEFAULTS, "time step", "dt_seconds", default=1.0)
+    space_step_m: float = _config_float(_CONFIG_DEFAULTS, "space step", "space_step_m", default=0.0)
     duration_hours: float = _duration_hours(_CONFIG_DEFAULTS, default=14.0)
     ramp_hours: float = _config_float(_CONFIG_DEFAULTS, "ramp hours", "ramp_hours", default=0.5)
     target_head_flow_m3s: float = _config_float(
@@ -103,13 +119,27 @@ class Config:
     )
     safe_depth_ratio: float = _config_float(_CONFIG_DEFAULTS, "safe depth ratio", "safe_depth_ratio", default=0.90)
     min_bed_slope: float = _config_float(_CONFIG_DEFAULTS, "min bed slope", "min_bed_slope", default=5.0e-5)
+    implicit_picard_iterations: int = _config_int(
+        _CONFIG_DEFAULTS,
+        "implicit picard iterations",
+        "implicit_picard_iterations",
+        default=4,
+    )
+    implicit_active_set_iterations: int = _config_int(
+        _CONFIG_DEFAULTS,
+        "implicit active set iterations",
+        "implicit_active_set_iterations",
+        default=5,
+    )
 
 
 def load_config(path: Path = CONFIG_PATH) -> Config:
     data = _read_configuration(path)
     return Config(
+        solver=_config_str(data, "solver", "scheme", default=Config.solver),
         start_hours=_config_float(data, "start", "start_hours", default=Config.start_hours),
         dt_seconds=_config_float(data, "time step", "dt_seconds", default=Config.dt_seconds),
+        space_step_m=_config_float(data, "space step", "space_step_m", default=Config.space_step_m),
         duration_hours=_duration_hours(data, default=Config.duration_hours),
         ramp_hours=_config_float(data, "ramp hours", "ramp_hours", default=Config.ramp_hours),
         target_head_flow_m3s=_config_float(
@@ -128,6 +158,18 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
         ),
         safe_depth_ratio=_config_float(data, "safe depth ratio", "safe_depth_ratio", default=Config.safe_depth_ratio),
         min_bed_slope=_config_float(data, "min bed slope", "min_bed_slope", default=Config.min_bed_slope),
+        implicit_picard_iterations=_config_int(
+            data,
+            "implicit picard iterations",
+            "implicit_picard_iterations",
+            default=Config.implicit_picard_iterations,
+        ),
+        implicit_active_set_iterations=_config_int(
+            data,
+            "implicit active set iterations",
+            "implicit_active_set_iterations",
+            default=Config.implicit_active_set_iterations,
+        ),
     )
 
 
@@ -402,6 +444,51 @@ def _build_channel_grid(
     )
 
 
+def _resample_channel_grid(grid: ChannelGrid, step_m: float, synthetic_start: int, cfg: Config) -> ChannelGrid:
+    """Interpolate a channel grid to a target maximum spacing while preserving original node ids."""
+
+    if step_m <= 0.0 or len(grid.ids) <= 1 or grid.x[-1] <= step_m:
+        return grid
+
+    regular_x = np.arange(0.0, float(grid.x[-1]), step_m, dtype=float)
+    tagged_points = [(float(x), None) for x in regular_x]
+    tagged_points.append((float(grid.x[-1]), grid.ids[-1]))
+    tagged_points.extend((float(x), node_id) for x, node_id in zip(grid.x, grid.ids))
+    tagged_points.sort(key=lambda item: (round(item[0], 6), item[1] is None))
+
+    min_gap = min(0.25 * step_m, 0.25)
+    selected: List[tuple[float, int | None]] = []
+    for x_value, node_id in tagged_points:
+        if not selected or x_value - selected[-1][0] >= min_gap:
+            selected.append((x_value, node_id))
+            continue
+        if node_id is not None and selected[-1][1] is None:
+            selected[-1] = (x_value, node_id)
+
+    new_x = np.asarray([round(x, 6) for x, _ in selected], dtype=float)
+    new_ids: List[int] = []
+    synthetic_count = 0
+    for _, node_id in selected:
+        if node_id is None:
+            node_id = synthetic_start - synthetic_count
+            synthetic_count += 1
+        new_ids.append(node_id)
+
+    bed = np.interp(new_x, grid.x, grid.bed)
+    return ChannelGrid(
+        name=grid.name,
+        ids=new_ids,
+        x=new_x,
+        dx_cell=_cell_lengths_from_x(new_x.tolist()),
+        bed=bed,
+        depth=np.interp(new_x, grid.x, grid.depth),
+        bottom_width=np.interp(new_x, grid.x, grid.bottom_width),
+        side_slope=np.interp(new_x, grid.x, grid.side_slope),
+        manning_n=np.interp(new_x, grid.x, grid.manning_n),
+        slope=_local_slopes_from_bed(new_x, bed, cfg),
+    )
+
+
 def _first_branch_child(node: int, nodes: Dict[int, stage1.Node], neighbors: Dict[int, List[int]]) -> int | None:
     main_nodes = set(range(MAIN_START, MAIN_END + 1))
     branch_children = [child for child in neighbors.get(node, []) if child not in main_nodes and child in nodes]
@@ -432,13 +519,15 @@ def build_network(cfg: Config):
     neighbors = stage1.parse_neighbors(DATA_DIR / "neighborId.txt")
     main_ids = [node_id for node_id in range(MAIN_START, MAIN_END + 1) if node_id in nodes]
     main_grid = _build_channel_grid("main", main_ids, nodes, params, cfg)
+    main_grid = _resample_channel_grid(main_grid, cfg.space_step_m, -1_000_000, cfg)
     branch_grids: Dict[int, ChannelGrid] = {}
     for node in DIVERSION_NODES:
         root = _first_branch_child(node, nodes, neighbors)
         if root is None:
             continue
         branch_ids = _trace_branch_chain(root, nodes, neighbors)
-        branch_grids[node] = _build_channel_grid(f"branch_{node}", branch_ids, nodes, params, cfg)
+        branch_grid = _build_channel_grid(f"branch_{node}", branch_ids, nodes, params, cfg)
+        branch_grids[node] = _resample_channel_grid(branch_grid, cfg.space_step_m, -2_000_000 - node * 100_000, cfg)
     limits = branch_limits(nodes, params, neighbors, cfg)
     return nodes, params, neighbors, main_grid, branch_grids, limits
 
@@ -735,7 +824,7 @@ def _junction_flow_from_energy(
     return max(0.0, min(q_capacity, remaining / cfg.dt_seconds, main_storage, branch_storage))
 
 
-def simulate(cfg: Config):
+def _simulate_explicit(cfg: Config):
     _, _, _, main_grid, branch_grids, limits = build_network(cfg)
     branch_network = _concatenate_branch_network(branch_grids)
     main_index = {node: idx for idx, node in enumerate(main_grid.ids)}
@@ -878,4 +967,18 @@ def simulate(cfg: Config):
         "main_hmax_time": main_hmax_time.tolist(),
         "branch_ids": {node: grid.ids for node, grid in branch_grids.items()},
         "network_coupling": "main and selected diversion branch chains; junction flow from water-level/energy slope with conservative mass transfer",
+        "solver": "explicit-hll",
     }
+
+
+def simulate(cfg: Config):
+    """Run the configured Saint-Venant dispatch solver."""
+
+    solver = cfg.solver.strip().lower()
+    if solver in {"explicit", "explicit-hll", "hll"}:
+        return _simulate_explicit(cfg)
+    if solver in {"implicit", "implicit-network", "network-implicit", "preissmann", "preissmann-network"}:
+        import implicit_dispatch
+
+        return implicit_dispatch.simulate(cfg)
+    raise ValueError(f"Unknown dispatch solver: {cfg.solver!r}")

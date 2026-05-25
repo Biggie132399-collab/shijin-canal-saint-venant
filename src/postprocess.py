@@ -108,7 +108,8 @@ def write_cumulative_supply_outputs(result: Mapping[str, object]) -> Postprocess
         "csv": str(csv_path),
         "formula": "W_k(t)=integral_0^t Q_div,k(tau) d tau",
         "unit": "m3; plotted as 1e4 m3",
-        "source": "dispatch.py finite-volume dispatch simulation",
+        "source": result.get("solver", "dispatch.py configured dispatch simulation"),
+        "network_coupling": result.get("network_coupling"),
         "completion": {
             str(node): {
                 "demand_m3": dispatch.SPECS[node].demand_m3,
@@ -156,7 +157,8 @@ def write_key_depth_outputs(result: Mapping[str, object]) -> PostprocessSummary:
     summary = {
         "figure": str(fig_path),
         "csv": str(csv_path),
-        "model": "1-D Saint-Venant finite-volume HLL forward model with semi-implicit Manning friction",
+        "model": result.get("solver", "implicit-network"),
+        "network_coupling": result.get("network_coupling"),
         "plotted_variable": "hydraulic depth h at key nodes",
         "unit": "m",
         "key_nodes": key_depth.KEY_NODES,

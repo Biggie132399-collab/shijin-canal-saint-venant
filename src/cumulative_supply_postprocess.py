@@ -7,9 +7,8 @@ Figure 3 shows cumulative supplied water volume at each diversion outlet:
 
     W_k(t) = ∫ Q_div,k(t) dt
 
-The discharge time series comes from dispatch.py, i.e. a Saint-Venant
-finite-volume forward run with explicit HLL flux and
-semi-implicit Manning friction.
+The discharge time series comes from dispatch.py, i.e. the configured
+Saint-Venant dispatch solver.
 """
 
 from __future__ import annotations

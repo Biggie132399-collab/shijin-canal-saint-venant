@@ -7,7 +7,8 @@
 - `lineParam.txt` 是渠道断面参数文件，不是单独的新算法。其字段包括线段属性、渠深 `D/H`、底宽 `bottomwidth`、边坡角 `Angle` 和 Manning 糙率。
 - 当前程序为 Python/NumPy 自编一维 Saint-Venant 正演原型，用于验证 0-456 主渠段拓扑、断面参数、分水口-支渠网络耦合、供水过程和水位约束。
 - 当前原型没有直接调用老师现有一维模型的 `exe` 或 `source code`，也没有直接调用 HEC-RAS、TELEMAC 等外部求解器。
-- 当前正演程序的通量项采用 NumPy 向量化的有限体积 HLL 数值通量，摩阻项采用半隐式 Manning 修正；分水口汊点按主渠与支渠水位差形成的能量坡降计算入支流量，并在主渠与支渠间守恒转移水量。因此它的控制方程是一维 Saint-Venant 方程，但数值离散格式不等同于老师现有一维软件；若后续接入老师软件，应按其实际离散格式统一公式和代码。
+- 当前默认正演程序采用 NumPy 实现的全隐式河网联立求解：未知量为各计算结点水位和各连接边流量，主渠、支渠和配水汊点在同一个图方程中同时满足结点质量守恒和连接边动量关系。旧的显式 HLL 有限体积求解器仍保留，可在 `data/configuration.json` 中把 `solver` 改为 `explicit-hll` 用作对照。
+- 当前 1 m 网格下的隐式线性系统利用树状渠系拓扑做直接消元，CPU 上即可在十几秒量级完成 14 h 工况；若后续扩展到有环河网或大量方案并行，可改用 CUDA 稀疏求解器或批量方案并行加速。
 
 ## 2. 目录结构
 
@@ -22,7 +23,8 @@ data/configuration.json # Saint-Venant 配水模拟工况与数值参数
 src/
   simulator.py                               # 统一模拟入口：运行 Saint-Venant 与 Pati/MC 验证模型
   postprocess.py                             # 统一后处理入口：生成图件、表格并同步最终结果目录
-  dispatch.py                                # 当前 Saint-Venant 动态配水调度核心
+  dispatch.py                                # Saint-Venant 动态配水调度统一入口与显式对照求解器
+  implicit_dispatch.py                       # 当前默认全隐式河网联立求解核心
   dispatch_postprocess.py                    # 配水出流过程图和配水结果表后处理
   saint_venant_legacy_dispatch_simulation.py # 早期 Saint-Venant 配水正演原型
   saint_venant_dispatch_topology_and_capacity.py # 图1与支渠能力检查
@@ -83,10 +85,10 @@ python src/postprocess.py sync
 ## 5. 当前工况
 
 - 渠首边界：流量由 0 平滑爬升至 80 m3/s。
-- 数值工况参数从 `data/configuration.json` 读取；当前时间步长为 1 s，模拟时段为 0-14 h，输出间隔为 60 s。
+- 数值工况参数从 `data/configuration.json` 读取；当前默认求解器为 `implicit-network`，空间重采样步长为 1 m，时间步长为 600 s，模拟时段为 0-14 h。
 - 配水口最大能力：71、89 口为 20 m3/s，287 口为 12 m3/s，150、194、349、383 口为 5 m3/s。
 - 配水口控制：按最大能力放水，累计供水达到假设需水量后关闸。
-- 分水口在 Saint-Venant 框架中作为主渠-支渠耦合汊点处理：支渠链参与动态正演，入支流量由主渠/支渠水位差、支渠安全能力、配水口能力、剩余需水量和局部可取水量共同限制，同时在主渠与支渠之间守恒转移质量并修正动量。
+- 分水口在 Saint-Venant 框架中作为主渠-支渠耦合汊点处理：每个配水口是主渠结点到支渠入口结点的一条受控连接边，入支流量由隐式水位差/动量关系求得，并受配水口能力、支渠安全能力、剩余需水量和局部水深启闭因子限制。
 
 ## 6. 结果说明
 

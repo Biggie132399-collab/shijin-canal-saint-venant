@@ -142,7 +142,8 @@ def save_csv_and_summary(result, fig_path: Path):
     summary = {
         "figure": str(fig_path),
         "csv": str(csv_path),
-        "model": "1-D Saint-Venant finite-volume HLL forward model with semi-implicit Manning friction",
+        "model": result.get("solver", "implicit-network"),
+        "network_coupling": result.get("network_coupling"),
         "plotted_variable": "hydraulic depth h at key nodes",
         "unit": "m",
         "key_nodes": KEY_NODES,

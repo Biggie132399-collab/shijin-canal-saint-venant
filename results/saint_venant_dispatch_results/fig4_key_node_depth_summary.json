@@ -1,7 +1,8 @@
 {
   "figure": "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/saint_venant_dispatch_results/figures/fig4_key_node_depth_process.png",
   "csv": "/data/jian/agents/developer/models/shijin-canal-saint-venant/results/saint_venant_dispatch_results/fig4_key_node_depth_timeseries.csv",
-  "model": "1-D Saint-Venant finite-volume HLL forward model with semi-implicit Manning friction",
+  "model": "implicit-network",
+  "network_coupling": "fully implicit main-branch network coupling; node continuity and link momentum are solved as one graph system with active-set diversion limits",
   "plotted_variable": "hydraulic depth h at key nodes",
   "unit": "m",
   "key_nodes": [

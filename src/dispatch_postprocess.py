@@ -205,18 +205,23 @@ def write_dispatch_outputs(result: Mapping[str, object], fig_path: Path, out_dir
         "figure": str(fig_path),
         "timeseries_csv": str(timeseries_path),
         "dispatch_table_csv": str(table_path),
-        "model": "1-D Saint-Venant finite-volume HLL forward model with semi-implicit Manning friction",
+        "model": result.get(
+            "solver",
+            "implicit-network",
+        ),
         "network_coupling": result.get(
             "network_coupling",
-            "main canal with diversion junction source terms",
+            "fully implicit main-branch network coupling",
         ),
+        "space_step_m": getattr(cfg, "space_step_m", None),
+        "dt_seconds": cfg.dt_seconds,
         "head_boundary": {
             "initial_flow_m3s": 0.0,
             "target_flow_m3s": cfg.target_head_flow_m3s,
             "ramp_hours": cfg.ramp_hours,
-            "boundary_depth": "Manning normal depth compatible with boundary discharge",
+            "boundary_condition": "known upstream inflow enters the upstream node continuity equation",
         },
-        "diversion_rule": "At each diversion junction, Qdiv is solved from main/branch water-level difference as an energy-slope Manning capacity, then limited by specified Qmax, branch safe capacity, remaining demand, local main-canal storage, and branch freeboard.",
+        "diversion_rule": "Each diversion is a constrained graph edge from main canal node to branch inlet. Its discharge is solved implicitly from the water-level difference and link momentum relation, then limited by specified Qmax, branch safe capacity, remaining demand, and local depth activation.",
         "safe_depth_ratio_for_branch_capacity": cfg.safe_depth_ratio,
         "branch_chain_node_count": {
             str(node): len(result.get("branch_ids", {}).get(node, []))

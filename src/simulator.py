@@ -142,7 +142,9 @@ def summarize_dispatch(
     dt_seconds = getattr(cfg_obj, "dt_seconds", inferred_dt)
     return {
         "kind": "dispatch_saint_venant",
+        "solver": result.get("solver", getattr(cfg_obj, "solver", None)),
         "network_coupling": result.get("network_coupling"),
+        "space_step_m": getattr(cfg_obj, "space_step_m", None),
         "branch_chain_node_count": {
             str(node): len(result.get("branch_ids", {}).get(node, []))  # type: ignore[union-attr]
             for node in diversion_nodes
@@ -158,6 +160,7 @@ def summarize_dispatch(
         ),
         "first_positive_h": first_positive_h,
         "close_h": close_h,
+        "solver_stats": result.get("solver_stats"),
     }
 
 

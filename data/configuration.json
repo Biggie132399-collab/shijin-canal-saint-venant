@@ -1,5 +1,7 @@
 {
-    "time step" : 1.0,
+    "solver" : "implicit-network",
+    "time step" : 600.0,
+    "space step" : 1.0,
     "start" : 0.0,
     "stop" : 14.0,
     "ramp hours" : 0.5,
@@ -8,5 +10,7 @@
     "min depth m" : 0.03,
     "output interval seconds" : 60.0,
     "safe depth ratio" : 0.90,
-    "min bed slope" : 5.0e-5
+    "min bed slope" : 5.0e-5,
+    "implicit picard iterations" : 4,
+    "implicit active set iterations" : 5
 }
